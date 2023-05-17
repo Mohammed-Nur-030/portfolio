@@ -8,7 +8,7 @@ const devOnlyPlugins = [getStartedPlugin()]
 
 export default defineConfig({
   name: 'default',
-  title: 'grey-manatee',
+  title: 'portfolio',
 
   projectId: 'r4vqhohb',
   dataset: 'production',
