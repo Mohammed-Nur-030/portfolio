@@ -1,0 +1,197 @@
+* // Everything, i.e. all documents
+*[] // Everything with no filters applied, i.e. all documents
+*[_type == "movie"] // All movie documents
+*[_id == "abc.123"] // _id equals
+*[_type in ["movie", "person"]] // _type is movie or person
+*[_type == "movie" && popularity > 15 && releaseDate > "2016-04-25"] // multiple filters AND
+*[_type == "movie" && (popularity > 15 || releaseDate > "2016-04-25")] // multiple filters OR
+*[popularity < 15] // less than
+*[popularity > 15] // greater than
+*[popularity <= 15] // less than or equal
+*[popularity >= 15] // greater than or equal
+*[popularity == 15]
+*[releaseDate != "2016-04-27"] // not equal
+*[!(releaseDate == "2016-04-27")] // not equal
+*[!(releaseDate != "2016-04-27")] // even equal via double negatives "not not equal"
+*[dateTime(_updatedAt) > dateTime('2018-04-20T20:43:31Z')] // Use zulu-time when comparing datetimes to strings
+*[dateTime(_updatedAt) > dateTime(now()) - 60*60*24*7] // Updated within the past week
+*[name < "Baker"] // Records whose name precedes "Baker" alphabetically
+*[awardWinner == true] // match boolean
+*[awardWinner] // true if awardWinner == true
+*[!awardWinner] // true if awardWinner == false
+*[defined(awardWinner)] // has been assigned an award winner status (any kind of value)
+*[!defined(awardWinner)] // has not been assigned an award winner status (any kind of value)
+*[title == "Aliens"]
+*[title in ["Aliens", "Interstellar", "Passengers"]]
+*[_id in path("a.b.c.*")] // _id matches a.b.c.d but not a.b.c.d.e
+*[_id in path("a.b.c.**")] // _id matches a.b.c.d, and also a.b.c.d.e.f.g, but not a.b.x.1
+*[!(_id in path("drafts.**"))] // _id matches anything that is not under the drafts-path
+*["yolo" in tags] // documents that have the string "yolo" in the array "tags"
+*[status in ["completed", "archived"]] // the string field status is either == "completed" or "archived"
+*["person_sigourney-weaver" in castMembers[].person._ref] // Any document having a castMember referencing sigourney as its person
+*[slug.current == "some-slug"] // nested properties
+*[count((categories[]->slug.current)[@ in ["action", "thriller"]]) > 0] // documents that reference categories with slugs of "action" or "thriller"
+*[count((categories[]->slug.current)[@ in ["action", "thriller"]]) == 2] // documents that reference categories with slugs of "action" and "thriller"
+  // set == 2 based on the total number of items in the array
+
+Text matching
+Gotcha
+The match operator is designed for human-language text and might not do what you expect!
+
+// Text contains the word "word"
+*[text match "word"]
+
+// Title contains a word starting with "wo"
+*[title match "wo*"] 
+
+// Inverse of the previous query; animal matches the start of the word "caterpillar" (perhaps animal == "cat")
+*["caterpillar" match animal + "*"] 
+
+// Title and body combined contains a word starting with "wo" and the full word "zero"
+*[[title, body] match ["wo*", "zero"]] 
+
+// Are there aliens in my rich text?
+*[body[].children[].text match "aliens"] 
+
+// Note how match operates on tokens!
+"foo bar" match "fo*"  // -> true
+"my-pretty-pony-123.jpg" match "my*.jpg"  // -> false
+
+Slice Operations
+Protip
+There is no default limit, meaning that if you're not explicit about slice, you'll get everything.
+
+*[_type == "movie"][0] // a single movie (an object is returned, not an array)
+*[_type == "movie"][0..5] // first 6 movies (inclusive)
+*[_type == "movie"][0...5] // first 5 movies (non-inclusive)
+*[_type == "movie"]{title}[0...10] // first 10 movie titles
+*[_type == "movie"][0...10]{title} // first 10 movie titles
+*[_type == "movie"][10...20]{title} // first 10 movie titles, offset by 10
+*[_type == "movie"] // no slice specified --> all movies are returned
+
+Also note: The above queries don't make much sense without also specifying an order. E.g. the "first 6 movies" query only returns "first" movies in the sense that these are the first six movies the backend happens to pull out.
+
+Ordering
+Protip
+Documents are returned by default in ascending order by _id, which may not be what you're after. If you're querying for a subset of your documents, it's usually a good idea to specify an order.
+
+No matter what sort order is specified, the ascending order by _id will always remain the final tie-breaker.
+
+// order results
+*[_type == "movie"] | order(_createdAt asc)
+
+// order results by multiple attributes
+*[_type == "movie"] | order(releaseDate desc) | order(_createdAt asc)
+
+// order todo items by descending priority,
+// where priority is equal, list most recently updated
+// item first
+*[_type == "todo"] | order(priority desc, _updatedAt desc) 
+
+// the single, oldest document
+*[_type == "movie"] | order(_createdAt asc)[0]
+
+// the single, newest document
+*[_type == "movie"] | order(_createdAt desc)[0]
+
+// oldest 10 documents
+*[_type == "movie"] | order(_createdAt asc)[0..9]
+
+// BEWARE! This selects 10 documents using the default
+// ordering, and *only the selection* is ordered by
+// _createdAt in ascending order
+*[_type == "movie"][0..9] | order(_createdAt asc)
+
+// limit/offset using external params (see client documentation)
+*[_type == "movie"] | order(_createdAt asc) [$start..$end]
+
+// order results alphabetically by a string field
+// This is case sensitive, so A-Z come before a-z
+*[_type == "movie"] | order(title asc)
+
+// order results alphabetically by a string field,
+// ignoring case
+*[_type == "movie"] | order(lower(title) asc)
+
+Joins
+// Fetch movies with title, and join with poster asset with path + url
+*[_type=='movie']{title,poster{asset->{path,url}}}
+
+// Say castMembers is an array containing objects with character name and a reference to the person:
+// We want to fetch movie with title and an attribute named "cast" which is an array of actor names
+*[_type=='movie']{title,'cast': castMembers[].person->name}
+
+// Same query as above, except "cast" now contains objects with person._id and person.name
+*[_type=='movie']{title,'cast': castMembers[].person->{_id, name}}
+
+// Using the ^ operator to refer to the enclosing document. Here ^._id refers to the id
+// of the enclosing person record.
+*[_type=="person"]{
+  name,
+  "relatedMovies": *[_type=='movie' && references(^._id)]{ title }
+}
+
+// Books by author.name (book.author is a reference)
+*[_type == "book" && author._ref in *[_type=="author" && name=="John Doe"]._id ]{...}
+
+Objects and Arrays
+// Create your own objects
+// https://groq.dev/lcGV0Km6dpvYovREqq1gLS
+{
+  // People ordered by Nobel prize year
+  "peopleByPrizeYear": *[]|order(prizes[0].year desc){
+  	"name": firstname + " " + surname,
+    "orderYear": prizes[0].year,
+    prizes
+  },
+  // List of all prizes ordered by year awarded
+  "allPrizes": *[].prizes[]|order(year desc)
+}
+
+// Get all Nobel prizes from all root person documents
+// https://groq.dev/v8T0DQawC6ihbNUf4cUeeS
+*[].prizes[]
+
+Object Projections
+// return only title
+*[_type == 'movie']{title} 
+
+// return values for multiple attributes
+*[_type == 'movie']{_id, _type, title} 
+
+// explicitly name the return field for _id
+*[_type == 'movie']{'renamedId': _id, _type, title} 
+
+// Return an array of attribute values (no object wrapper)
+*[_type == 'movie'].title
+*[_type == 'movie']{'characterNames': castMembers[].characterName}
+
+// movie titled Arrival and its posterUrl
+*[_type=='movie' && title == 'Arrival']{title,'posterUrl': poster.asset->url} 
+
+// Explicitly return all attributes
+*[_type == 'movie']{...} 
+
+// Some computed attributes, then also add all attributes of the result
+*[_type == 'movie']{'posterUrl': poster.asset->url, ...} 
+
+// Default values when missing or null in document
+*[_type == 'movie']{..., 'rating': coalesce(rating, 'unknown')}
+
+// Number of elements in array 'actors' on each movie
+*[_type == 'movie']{"actorCount": count(actors)} 
+
+// Apply a projection to every member of an array
+*[_type == 'movie']{castMembers[]{characterName, person}} 
+
+// Filter embedded objects
+*[_type == 'movie']{castMembers[characterName match 'Ripley']{characterName, person}} 
+
+// Follow every reference in an array of references
+*[_type == 'book']{authors[]->{name, bio}}
+
+// Explicity name the outer return field
+{'threeMovieTitles': *[_type=='movie'][0..2].title}
+
+// Combining several unrelated queries in one request
+{'featuredMovie': *[_type == 'movie' && title == 'Alien'][0], 'scifiMovi

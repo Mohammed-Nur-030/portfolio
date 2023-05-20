@@ -1,0 +1,41 @@
+
+
+    <div className="App bg-gray-400">
+     hi im app.js
+      </div>
+
+     <div>
+     blogs.map((blog) => (
+       <div key={blog._id}>
+      <h1>{blog.title}</h1>
+       to display content we will install npm i react-portable-text 
+       <p>{blog.content}</p>
+      <div>
+    <PortableText
+      // Pass in block content straight from Sanity.io
+      content={blog.content}
+      projectId= {process.env.REACT_APP_SANITY_PROJECT_ID} // find this at manage.sanity.io or in your sanity.json
+      dataset="production"
+      // Optionally override marks, decorators, blocks, etc. in a flat
+      // structure without doing any gymnastics
+      serializers={{
+        h1: (props) => <h1 style={{ color: "red" }} {...props} />,
+        li: ({ children }) => <li className="special-list-item">{children}</li>,
+     
+      }}
+    />
+  </div>
+  <br />
+  <hr />
+  <br />
+      
+     
+      {/* Render other properties of the blog */}
+        /* </div> */
+      
+     ))}
+      </div>     
+
+
+ </div> 
+
