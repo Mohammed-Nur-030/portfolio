@@ -1,5 +1,5 @@
 export default{
-    name:'blogs',
+    name:'blog',
     title:'Blogs',
     type:'document',
     fields:[
