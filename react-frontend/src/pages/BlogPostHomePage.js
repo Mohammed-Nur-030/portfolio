@@ -37,6 +37,9 @@ const BlogPostHomePage = () => {
     }
     console.log("blogPost")
     console.log(blogPost)
+    const blogObject = blogPost?.content.find(item => item._type === 'block');
+    console.log("blogObject")
+    console.log(blogObject)
    
   
     return (
@@ -67,7 +70,8 @@ const BlogPostHomePage = () => {
                 <h2 id="lorem-ipsum-dolor-sit-amet">{blogPost?.title}</h2>
                 <div>
                   {
-                    blogPost?.content[1]?.children[0]?.text
+                    
+                    blogObject?.children[0]?.text
                   }
                 </div>
   
