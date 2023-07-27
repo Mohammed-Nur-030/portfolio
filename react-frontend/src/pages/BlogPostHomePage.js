@@ -72,7 +72,7 @@ const BlogPostHomePage = () => {
                   {
                     
                     blogObject?.children[0]?.text
-                  }
+                  } 
                 </div>
   
    
