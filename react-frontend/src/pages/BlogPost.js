@@ -1,6 +1,7 @@
 import { useParams } from 'react-router-dom';
 import { client } from '../client';
 import { useState, useEffect } from 'react';
+import Spinner from '../components/Spinner';
 
 const BlogPost = () => {
   const { slug } = useParams();
@@ -16,7 +17,7 @@ const BlogPost = () => {
       } catch (error) {
         console.error('Error fetching blog post:', error);
       } finally {
-        setLoading(false);
+        setLoading(false); 
       }
     };
 
@@ -24,7 +25,7 @@ const BlogPost = () => {
   }, [slug]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <Spinner/>;
   }
 
   if (!blogPost) {

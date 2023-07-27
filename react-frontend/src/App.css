@@ -287,6 +287,12 @@ video {
     display: block;
     vertical-align: middle
 }
+.img-container{
+    /* height: 60px;
+    width: 60px; */
+    margin: 20px;
+
+}
 
 img,
 video {

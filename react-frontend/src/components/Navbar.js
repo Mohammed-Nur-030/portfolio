@@ -28,7 +28,7 @@ const Navbar = () => {
           ></span>
         </li>
         
-        <li className="group pl-6">
+        {/* <li className="group pl-6">
           
           <a
             href="/#services"
@@ -38,7 +38,9 @@ const Navbar = () => {
           <span
             className="block h-0.5 w-full bg-transparent group-hover:bg-yellow"
           ></span>
-        </li>
+        </li> */}
+
+        
         
         <li className="group pl-6">
           
