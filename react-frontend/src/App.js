@@ -1,19 +1,14 @@
 import logo from './logo.svg';
 import './App.css';
-import { createClient } from "@sanity/client";
+
 import React, { useState, useEffect } from 'react';
-import { urlFor, client } from './client';
-import PortableText from "react-portable-text";
-import { Meta } from 'react-head';
-import { Helmet as Head } from 'react-helmet';
-import { Helmet } from 'react-helmet';
-import { Link } from 'react-router-dom';
+import {  client } from './client';
+
 import Blog from './pages/blog';
 import { Route, Routes } from 'react-router-dom';
 import BlogPost from './pages/BlogPost';
 import Home from './pages/Home';
 import Spinner from './components/Spinner';
-import Contact from './components/Contact';
 import BlogPostHomePage from './pages/BlogPostHomePage';
 // import SinglePost from './pages/SinglePost';
 

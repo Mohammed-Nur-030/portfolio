@@ -84,9 +84,39 @@ const About = ({ about, obj }) => {
             </div>
           </div>
 
-          <div className="skills-icon flex flex-row w-full pl-0 pt-10 sm:w-3/4 lg:w-2/5 lg:pl-12 lg:pt-0  justify-center items-center">
+          <div className="skills-icon flex flex-row w-full mx-6 pl-0 pt-10 sm:w-3/4 lg:w-2/5 lg:pl-12 lg:pt-0  justify-center items-center">
 
-            <div className='grid grid-cols-3 gap-4  '>
+            <div className='grid grid-cols-4 gap-2  '>
+            <div className='img-container  hover:scale-150 transform duration-100 ease-in flex items-center justify-center  '>
+                <img src="../assets/img/typescript.png" 
+                  className='hover:scale-120 transform duration-100 ease-in '
+                alt="Typescript" />
+              </div>
+              <div className='img-container  hover:scale-150 transform duration-100 ease-in flex items-center justify-center  '>
+                <img src="../assets/img/prisma-seeklogo.svg" 
+                  className='hover:scale-120 transform duration-100 ease-in '
+                alt="Prisma" />
+              </div>
+              <div className='img-container  hover:scale-150 transform duration-100 ease-in flex items-center justify-center  '>
+                <img src="../assets/img/next-js-seeklogo.svg" 
+                  className='hover:scale-120 transform duration-100 ease-in '
+                alt="Nextjs" />
+              </div>
+              <div className='img-container  hover:scale-150 transform duration-100 ease-in flex items-center justify-center  '>
+                <img src="../assets/img/postgresql-seeklogo.svg" 
+                  className='hover:scale-120 transform duration-100 ease-in '
+                alt="Postgres" />
+              </div>
+              <div className='mx-2 mr-2 hover:scale-150 transform duration-100 ease-in flex items-center justify-center  '>
+                <img src="../assets/img/auth0-seeklogo.svg" 
+                  className='hover:scale-120 transform duration-100 ease-in '
+                alt="Auth0" />
+              </div>
+              <div className=' mx-2  hover:scale-150 transform duration-100 ease-in flex items-center justify-center  '>
+                <img src="../assets/img/docker-seeklogo.svg" 
+                  className='hover:scale-120 transform duration-100 ease-in '
+                alt="Docker" />
+              </div>
               <div 
               className='img-container 
                 hover:scale-150 transform duration-100 ease-in  '
@@ -126,7 +156,7 @@ const About = ({ about, obj }) => {
                   className='hover:scale-120 transform duration-100 ease-in'
                 alt="C++" />
               </div>
-              <div className='img-container  hover:scale-150 transform duration-100 ease-in   my-4 py-2'>
+              <div className=' hover:scale-150 transform duration-100 ease-in   my-4 py-2 '>
                 <img src="../assets/img/sanity.png" className=' hover:scale-120 transform duration-100 ease-in w-full h-full '
                  alt="Sanity" />
               </div>
@@ -145,11 +175,7 @@ const About = ({ about, obj }) => {
                   className='hover:scale-120 transform duration-100 ease-in'
                 alt="Git" />
               </div>
-              <div className='img-container  hover:scale-150 transform duration-100 ease-in flex items-center justify-center  '>
-                <img src="../assets/img/typescript.png" 
-                  className='hover:scale-120 transform duration-100 ease-in '
-                alt="Typescript" />
-              </div>
+            
             </div>
 
           </div>
